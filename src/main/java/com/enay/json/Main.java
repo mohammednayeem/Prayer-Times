@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.zone.ZoneOffsetTransition;
+import java.time.zone.ZoneRules;
 
 /**
  * Created by Mohammed on 8/2/2017.
@@ -18,10 +20,7 @@ public class Main {
     private static int currentPrayer = 0;
     private static int timeTill = 0;
     private static final String[] PRAYERS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
-    //private static DataLine.Info info;
-    //private static Clip bis;
-    //private static Clip fAthan;
-    //private static Clip rAthan;
+    private static ZoneId z = ZoneId.of("America/Montreal");
 
     private static void Bismillah() throws Exception
     {
@@ -195,9 +194,10 @@ public class Main {
     }
     private static void prayFajr() {
         currentPrayer = 0;
-        int timeTillFajr = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMinutes());
+        int timeTillFajrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toHours());
+        int timeTillFajrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMinutes() - (timeTillFajrh * 60));
         int timeTillFajrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillFajr + " minutes");
+        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillFajrh + " hours and " + timeTillFajrm + " minutes");
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillFajrms);
@@ -211,9 +211,10 @@ public class Main {
     }
     private static void prayDhuhr() {
         currentPrayer = 1;
-        int timeTillDhuhr = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMinutes());
+        int timeTillDhuhrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toHours());
+        int timeTillDhuhrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMinutes() - (timeTillDhuhrh * 60));
         int timeTillDhuhrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillDhuhr + " minutes");
+        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillDhuhrh + " hours and " + timeTillDhuhrm + " minutes");
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillDhuhrms);
@@ -227,9 +228,10 @@ public class Main {
     }
     private static void prayAsr() {
         currentPrayer = 2;
-        int timeTillAsr = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMinutes());
+        int timeTillAsrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toHours());
+        int timeTillAsrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMinutes() - (timeTillAsrh * 60));
         int timeTillAsrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillAsr + " minutes");
+        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillAsrh + " hours and " + timeTillAsrm + " minutes");
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillAsrms);
@@ -243,9 +245,10 @@ public class Main {
     }
     private static void prayMaghrib() {
         currentPrayer = 3;
-        int timeTillMaghrib = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMinutes());
+        int timeTillMaghribh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toHours());
+        int timeTillMaghribm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMinutes() - (timeTillMaghribh * 60));
         int timeTillMaghribms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillMaghrib + " minutes");
+        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillMaghribh + " hours and " + timeTillMaghribm + " minutes");
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillMaghribms);
@@ -259,9 +262,10 @@ public class Main {
     }
     private static void prayIsha() {
         currentPrayer = 4;
-        int timeTillIsha = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMinutes());
+        int timeTillIshah = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toHours());
+        int timeTillIsham = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMinutes() - (timeTillIshah * 60));
         int timeTillIshams = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillIsha + " minutes");
+        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillIshah + " hours and " + timeTillIsham + " minutes");
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillIshams);
@@ -275,14 +279,13 @@ public class Main {
     }
     private static void noPrayer() {
         currentPrayer = 5;
-        ZoneId z = ZoneId.of("America/Montreal");
         ZonedDateTime now = ZonedDateTime.now(z);
         LocalDate tomorrow = now.toLocalDate().plusDays(1);
         ZonedDateTime tomorrowStart = tomorrow.atStartOfDay(z);
         int timeTillMidnight = (int) Duration.between(now, tomorrowStart).toMillis();
         try {
             System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] No more prayers tonight. Check back tomorrow");
-            System.out.println((int) Duration.between(now, tomorrowStart).toMinutes() + " till midnight.");
+            System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + (int) Duration.between(now, tomorrowStart).toMinutes() + " minutes till midnight.");
             Thread.sleep(timeTillMidnight);
             Runtime.getRuntime().gc();
 
@@ -296,19 +299,14 @@ public class Main {
         {
             case 0:
                 prayFajr();
-              //  break;
             case 1:
                 prayDhuhr();
-             //   break;
             case 2:
                 prayAsr();
-              //  break;
             case 3:
                 prayMaghrib();
-             //   break;
             case 4:
                 prayIsha();
-               // break;
             case 5:
                 noPrayer();
                 break;
@@ -318,6 +316,9 @@ public class Main {
         }
     }
     public static void main(String[] args) throws Exception {
+        ZoneRules rules = z.getRules();
+        ZoneOffsetTransition nextTransition = rules.nextTransition(Instant.now());
+        System.out.println("Next transition at: " + nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")));
         System.out.println("Time Now: " + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
         Bismillah();
         Runtime.getRuntime().gc();
