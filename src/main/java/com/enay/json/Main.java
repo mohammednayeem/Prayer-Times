@@ -21,6 +21,7 @@ public class Main {
     private static int timeTill = 0;
     private static final String[] PRAYERS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static ZoneId z = ZoneId.of("America/Montreal");
+    private static LocalDate daylightdate;
 
     private static void Bismillah() throws Exception
     {
@@ -318,6 +319,8 @@ public class Main {
     public static void main(String[] args) throws Exception {
         ZoneRules rules = z.getRules();
         ZoneOffsetTransition nextTransition = rules.nextTransition(Instant.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
+        daylightdate = LocalDate.parse( nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
         System.out.println("Next transition at: " + nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")));
         System.out.println("Time Now: " + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
         Bismillah();
