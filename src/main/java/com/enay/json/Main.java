@@ -22,6 +22,7 @@ public class Main {
     private static final String[] PRAYERS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static ZoneId z = ZoneId.of("America/Montreal");
     private static LocalDate daylightdate;
+    private static LocalDate today;
 
     private static void Bismillah() throws Exception
     {
@@ -148,6 +149,24 @@ public class Main {
             getPrayer();
         }
     }
+    private static int getDaylightSavingsTime(int num)
+    {
+        if(today.equals(daylightdate) && daylightdate.getMonthValue() == 11) {
+            return num - 3600000;
+        }
+        else if(today.equals(daylightdate) && daylightdate.getMonthValue() == 3) {
+            return num + 3600000;
+        }
+        else{
+            return num;
+        }
+    }
+    private static void recheckDaylightSavings() {
+        ZoneRules rules = z.getRules();
+        ZoneOffsetTransition nextTransition = rules.nextTransition(Instant.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
+        daylightdate = LocalDate.parse( nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
+    }
     private static void getShortestTime() {
         int tdhuhr = (int)Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMinutes();
         int tasr = (int) Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMinutes();
@@ -198,6 +217,11 @@ public class Main {
         int timeTillFajrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toHours());
         int timeTillFajrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMinutes() - (timeTillFajrh * 60));
         int timeTillFajrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMillis());
+        today = LocalDate.now();
+        if(today.equals(daylightdate.plusDays(1))) {
+            recheckDaylightSavings();
+        }
+        timeTillFajrms = getDaylightSavingsTime(timeTillFajrms);
         System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillFajrh + " hours and " + timeTillFajrm + " minutes");
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
