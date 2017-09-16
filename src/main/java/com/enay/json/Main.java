@@ -294,9 +294,9 @@ public class Main {
         int timeTillIsham = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMinutes() - (timeTillIshah * 60));
         int timeTillIshams = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMillis());
         if (timeTillIshah == 0) {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at "  + toAmerican(currentPrayer) + " ("+ (timeTillIsham + 1) + " minutes)" );
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillIsham + 1) + " minutes)");
         } else {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " ("+ timeTillIshah + " hours and " + (timeTillIsham + 1) + " minutes)");
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillIshah + " hours and " + (timeTillIsham + 1) + " minutes)");
         }
         try {
             Thread.sleep(timeTillIshams);
@@ -316,7 +316,11 @@ public class Main {
         int timeTillMidnight = (int) Duration.between(now, tomorrowStart).toMillis();
         try {
             System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] No more prayers tonight. Check back tomorrow");
-            System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + (int) Duration.between(now, tomorrowStart).toMinutes() + " minutes till midnight.\n\n");
+            if ((int) Duration.between(now, tomorrowStart).toHours() == 0) {
+                System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + ((int) Duration.between(now, tomorrowStart).toMinutes() - (((int) Duration.between(now, tomorrowStart).toHours()) * 60) + 1) + " minutes till midnight.\n\n");
+            } else {
+                System.out.println(((int) Duration.between(now, tomorrowStart).toMinutes() - (((int) Duration.between(now, tomorrowStart).toHours()) * 60) + 1) + " minutes till midnight.\n");
+            }
             Thread.sleep(timeTillMidnight);
             Runtime.getRuntime().gc();
 
