@@ -317,9 +317,9 @@ public class Main {
         try {
             System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] No more prayers tonight. Check back tomorrow");
             if ((int) Duration.between(now, tomorrowStart).toHours() == 0) {
-                System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + ((int) Duration.between(now, tomorrowStart).toMinutes() - (((int) Duration.between(now, tomorrowStart).toHours()) * 60) + 1) + " minutes till midnight.\n\n");
+                System.out.println(((int) Duration.between(now, tomorrowStart).toMinutes() - (((int) Duration.between(now, tomorrowStart).toHours()) * 60) + 1) + " minutes till midnight.\n\n");
             } else {
-                System.out.println(((int) Duration.between(now, tomorrowStart).toMinutes() - (((int) Duration.between(now, tomorrowStart).toHours()) * 60) + 1) + " minutes till midnight.\n");
+                System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + ((int) Duration.between(now, tomorrowStart).toMinutes() - (((int) Duration.between(now, tomorrowStart).toHours()) * 60) + 1) + " minutes till midnight.\n\n");
             }
             Thread.sleep(timeTillMidnight);
             Runtime.getRuntime().gc();
@@ -360,6 +360,7 @@ public class Main {
         Runtime.getRuntime().gc();
         while (true) {
             getPrayer();
+            System.out.println(LocalDate.now().format(DateTimeFormatter.ofPattern(("M/d/y"))));
         }
 
 
