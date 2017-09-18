@@ -16,14 +16,15 @@ import java.time.zone.ZoneRules;
  * Created by Mohammed on 8/2/2017.
  */
 public class Main {
+    private static final String[] PRAYERS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static String fajr, dhuhr, asr, maghrib, isha;
     private static int currentPrayer = 0;
     private static int timeTill = 0;
-    private static final String[] PRAYERS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static ZoneId z = ZoneId.of("America/Montreal");
     private static LocalDate daylightdate;
     private static LocalDate prevdaylightdate;
     private static LocalDate today;
+    private static OkHttpClient client = new OkHttpClient();
 
     private static void Bismillah() throws Exception {
         try {
@@ -104,8 +105,6 @@ public class Main {
         }
     }
 
-    private static OkHttpClient client = new OkHttpClient();
-
     private static String getJSON() throws IOException {
         Request request = new Request.Builder()
                 .url("http://api.aladhan.com/timingsByCity?city=Nashua&country=USA&method=2")
@@ -130,10 +129,10 @@ public class Main {
 
             //For testing purposes
             //fajr = "";
-            // dhuhr = "";
-            // asr = "";
-            //  maghrib = "16:56";
-            // isha = "";
+            //dhuhr = "";
+            //asr = "";
+            //maghrib = "16:56";
+            //isha = "";
 
             getShortestTime();
             choosePrayer();
@@ -206,109 +205,84 @@ public class Main {
             case 4:
                 return LocalTime.parse(isha, DateTimeFormatter.ofPattern("HH:mm")).format(DateTimeFormatter.ofPattern("hh:mm a"));
             default:
-                return "No more prayers for Today";
+                return "Unknown Prayer";
+        }
+    }
+
+    private static void printPrayer() {
+        int timeTillh = -1;
+        int timeTillm = -1;
+        int timeTillms = -1;
+        switch (currentPrayer) {
+            case 0: //Fajr
+                timeTillh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toHours());
+                timeTillm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMinutes() - (timeTillh * 60));
+                timeTillms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMillis());
+                today = LocalDate.now();
+                if (today.equals(daylightdate.plusDays(1))) {
+                    recheckDaylightSavings();
+                }
+                timeTillms = getDaylightSavingsTime(timeTillms);
+                break;
+            case 1: //Dhuhr
+                timeTillh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toHours());
+                timeTillm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMinutes() - (timeTillh * 60));
+                timeTillms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMillis());
+                break;
+            case 2: //Asr
+                timeTillh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toHours());
+                timeTillm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMinutes() - (timeTillh * 60));
+                timeTillms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMillis());
+                break;
+            case 3: //Maghrib
+                timeTillh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toHours());
+                timeTillm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMinutes() - (timeTillh * 60));
+                timeTillms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMillis());
+                break;
+            case 4: //Isha
+                timeTillh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toHours());
+                timeTillm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMinutes() - (timeTillh * 60));
+                timeTillms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMillis());
+                break;
+
+        }
+        if (timeTillh == 0) {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillm + 1) + " minutes)");
+        } else {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillh + " hours and " + (timeTillm + 1) + " minutes)");
+        }
+        try {
+            Thread.sleep(timeTillms);
+            playAthan();
+            Runtime.getRuntime().gc();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 
     private static void prayFajr() {
         currentPrayer = 0;
-        int timeTillFajrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toHours());
-        int timeTillFajrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMinutes() - (timeTillFajrh * 60));
-        int timeTillFajrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(fajr)).toMillis());
-        today = LocalDate.now();
-        if (today.equals(daylightdate.plusDays(1))) {
-            recheckDaylightSavings();
-        }
-        timeTillFajrms = getDaylightSavingsTime(timeTillFajrms);
-        if (timeTillFajrh == 0) {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillFajrm + 1) + " minutes)");
-        } else {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillFajrh + " hours and " + (timeTillFajrm + 1) + " minutes)");
-        }
-        try {
-            Thread.sleep(timeTillFajrms);
-            playAthan();
-            Runtime.getRuntime().gc();
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        printPrayer();
     }
 
     private static void prayDhuhr() {
         currentPrayer = 1;
-        int timeTillDhuhrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toHours());
-        int timeTillDhuhrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMinutes() - (timeTillDhuhrh * 60));
-        int timeTillDhuhrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMillis());
-        if (timeTillDhuhrh == 0) {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillDhuhrm + 1) + " minutes)");
-        } else {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillDhuhrh + " hours and " + (timeTillDhuhrm + 1) + " minutes)");
-        }
-        try {
-            Thread.sleep(timeTillDhuhrms);
-            playAthan();
-            Runtime.getRuntime().gc();
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        printPrayer();
     }
 
     private static void prayAsr() {
         currentPrayer = 2;
-        int timeTillAsrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toHours());
-        int timeTillAsrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMinutes() - (timeTillAsrh * 60));
-        int timeTillAsrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMillis());
-        if (timeTillAsrh == 0) {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillAsrm + 1) + " minutes)");
-        } else {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillAsrh + " hours and " + (timeTillAsrm + 1) + " minutes)");
-        }
-        try {
-            Thread.sleep(timeTillAsrms);
-            playAthan();
-            Runtime.getRuntime().gc();
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        printPrayer();
     }
 
     private static void prayMaghrib() {
         currentPrayer = 3;
-        int timeTillMaghribh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toHours());
-        int timeTillMaghribm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMinutes() - (timeTillMaghribh * 60));
-        int timeTillMaghribms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMillis());
-        if (timeTillMaghribh == 0) {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillMaghribm + 1) + " minutes)");
-        } else {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillMaghribh + " hours and " + (timeTillMaghribm + 1) + " minutes)");
-        }
-        try {
-            Thread.sleep(timeTillMaghribms);
-            playAthan();
-            Runtime.getRuntime().gc();
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        printPrayer();
     }
 
     private static void prayIsha() {
         currentPrayer = 4;
-        int timeTillIshah = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toHours());
-        int timeTillIsham = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMinutes() - (timeTillIshah * 60));
-        int timeTillIshams = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMillis());
-        if (timeTillIshah == 0) {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + (timeTillIsham + 1) + " minutes)");
-        } else {
-            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] " + PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer) + " (" + timeTillIshah + " hours and " + (timeTillIsham + 1) + " minutes)");
-        }
-        try {
-            Thread.sleep(timeTillIshams);
-            playAthan();
-            Runtime.getRuntime().gc();
-
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+        printPrayer();
     }
 
     private static void noPrayer() {
@@ -359,15 +333,13 @@ public class Main {
         ZoneOffsetTransition nextTransition = rules.nextTransition(Instant.now());
         ZoneOffsetTransition prevTransition = rules.previousTransition(Instant.now());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
-        daylightdate = LocalDate.parse(nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
-        prevdaylightdate = LocalDate.parse(prevTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
+        daylightdate = LocalDate.parse(nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("MM/d/y")), formatter);
+        prevdaylightdate = LocalDate.parse(prevTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("MM/d/y")), formatter);
         Bismillah();
         Runtime.getRuntime().gc();
         while (true) {
             getPrayer();
             System.out.println(LocalDate.now().format(DateTimeFormatter.ofPattern(("M/d/y"))));
         }
-
-
     }
 }
