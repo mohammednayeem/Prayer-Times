@@ -22,6 +22,7 @@ public class Main {
     private static final String[] PRAYERS = {"Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static ZoneId z = ZoneId.of("America/Montreal");
     private static LocalDate daylightdate;
+    private static LocalDate prevdaylightdate;
     private static LocalDate today;
 
     private static void Bismillah() throws Exception {
@@ -144,9 +145,9 @@ public class Main {
     }
 
     private static int getDaylightSavingsTime(int num) {
-        if (today.equals(daylightdate) && daylightdate.getMonthValue() == 11) {
+        if (today.equals(daylightdate) && daylightdate.getMonthValue() == 11 && !(prevdaylightdate.equals(today))) {
             return num + 3600000;
-        } else if (today.equals(daylightdate) && daylightdate.getMonthValue() == 3) {
+        } else if (today.equals(daylightdate) && daylightdate.getMonthValue() == 3 && !(prevdaylightdate.equals(today))) {
             return num - 3600000;
         } else {
             return num;
@@ -156,8 +157,10 @@ public class Main {
     private static void recheckDaylightSavings() {
         ZoneRules rules = z.getRules();
         ZoneOffsetTransition nextTransition = rules.nextTransition(Instant.now());
+        ZoneOffsetTransition prevTransition = rules.previousTransition(Instant.now());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
         daylightdate = LocalDate.parse(nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
+        prevdaylightdate = LocalDate.parse(prevTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
     }
 
     private static void getShortestTime() {
@@ -354,8 +357,10 @@ public class Main {
         System.out.println("Began on: " + LocalDate.now().format(DateTimeFormatter.ofPattern(("M/d/y"))) + " at " + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")));
         ZoneRules rules = z.getRules();
         ZoneOffsetTransition nextTransition = rules.nextTransition(Instant.now());
+        ZoneOffsetTransition prevTransition = rules.previousTransition(Instant.now());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
         daylightdate = LocalDate.parse(nextTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
+        prevdaylightdate = LocalDate.parse(prevTransition.getInstant().atZone(z).format(DateTimeFormatter.ofPattern("M/d/y")), formatter);
         Bismillah();
         Runtime.getRuntime().gc();
         while (true) {
