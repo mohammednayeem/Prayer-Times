@@ -105,19 +105,19 @@ public class Main {
         }
     }
 
-    private static String getJSON() throws IOException {
+    private static String getJSON(String website) throws IOException {
         Request request = new Request.Builder()
-                .url("http://api.aladhan.com/timingsByCity?city=Nashua&country=USA&method=2")
+                .url(website)
                 .build();
         okhttp3.Response response = client.newCall(request).execute();
         return response.body().string();
     }
 
-    private static void getPrayer() {
+    private static void getPrayer(String web) {
         currentPrayer = 0;
         String json;
         try {
-            json = getJSON();
+            json = getJSON(web);
             JSONObject json1 = new JSONObject(json);
             JSONObject data = json1.getJSONObject("data");
 
@@ -138,8 +138,8 @@ public class Main {
             choosePrayer();
         } catch (Exception e) {
             //e.printStackTrace();
-            System.out.println("Wasn't able to connect to API. Trying again......");
-            getPrayer();
+            System.out.println("Can't connect, trying alternative API.......");
+            getPrayer("http://api.aladhan.com/timingsByCity?city=Nashua&country=USA&method=2");
         }
     }
 
@@ -338,7 +338,7 @@ public class Main {
         Bismillah();
         Runtime.getRuntime().gc();
         while (true) {
-            getPrayer();
+            getPrayer("http://isgnnh.org/islamicfinder/get.php");
             System.out.println(LocalDate.now().format(DateTimeFormatter.ofPattern(("M/d/y"))));
         }
     }
