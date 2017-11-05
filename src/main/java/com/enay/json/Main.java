@@ -145,9 +145,9 @@ public class Main {
 
     private static int getDaylightSavingsTime(int num) {
         if (today.equals(daylightdate) && daylightdate.getMonthValue() == 11) {
-            return num - 3600000;
-        } else if (today.equals(daylightdate) && daylightdate.getMonthValue() == 3) {
             return num + 3600000;
+        } else if (today.equals(daylightdate) && daylightdate.getMonthValue() == 3) {
+            return num - 3600000;
         } else {
             return num;
         }
@@ -217,7 +217,11 @@ public class Main {
             recheckDaylightSavings();
         }
         timeTillFajrms = getDaylightSavingsTime(timeTillFajrms);
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillFajrh + " hours and " + timeTillFajrm + " minutes");
+        if (timeTillFajrh == 0) {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillFajrm + " minutes");
+        } else {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillFajrh + " hours and " + timeTillFajrm + " minutes");
+        }
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillFajrms);
@@ -233,7 +237,11 @@ public class Main {
         int timeTillDhuhrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toHours());
         int timeTillDhuhrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMinutes() - (timeTillDhuhrh * 60));
         int timeTillDhuhrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(dhuhr)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillDhuhrh + " hours and " + timeTillDhuhrm + " minutes");
+        if (timeTillDhuhrh == 0) {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillDhuhrm + " minutes");
+        } else {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillDhuhrh + " hours and " + timeTillDhuhrm + " minutes");
+        }
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillDhuhrms);
@@ -249,7 +257,11 @@ public class Main {
         int timeTillAsrh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toHours());
         int timeTillAsrm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMinutes() - (timeTillAsrh * 60));
         int timeTillAsrms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(asr)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillAsrh + " hours and " + timeTillAsrm + " minutes");
+        if (timeTillAsrh == 0) {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillAsrm + " minutes");
+        } else {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillAsrh + " hours and " + timeTillAsrm + " minutes");
+        }
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillAsrms);
@@ -265,7 +277,11 @@ public class Main {
         int timeTillMaghribh = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toHours());
         int timeTillMaghribm = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMinutes() - (timeTillMaghribh * 60));
         int timeTillMaghribms = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(maghrib)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillMaghribh + " hours and " + timeTillMaghribm + " minutes");
+        if (timeTillMaghribh == 0) {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillMaghribm + " minutes");
+        } else {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillMaghribh + " hours and " + timeTillMaghribm + " minutes");
+        }
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillMaghribms);
@@ -281,7 +297,11 @@ public class Main {
         int timeTillIshah = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toHours());
         int timeTillIsham = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMinutes() - (timeTillIshah * 60));
         int timeTillIshams = (int) Math.abs(Duration.between(LocalTime.now(), LocalTime.parse(isha)).toMillis());
-        System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillIshah + " hours and " + timeTillIsham + " minutes");
+        if (timeTillIshah == 0) {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillIsham + " minutes");
+        } else {
+            System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] Next Prayer is " + PRAYERS[currentPrayer] + " and it is in " + timeTillIshah + " hours and " + timeTillIsham + " minutes");
+        }
         System.out.println(PRAYERS[currentPrayer] + " is at " + toAmerican(currentPrayer));
         try {
             Thread.sleep(timeTillIshams);
@@ -301,7 +321,7 @@ public class Main {
         int timeTillMidnight = (int) Duration.between(now, tomorrowStart).toMillis();
         try {
             System.out.println("[" + LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")) + "] No more prayers tonight. Check back tomorrow");
-            System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + (int) Duration.between(now, tomorrowStart).toMinutes() + " minutes till midnight.");
+            System.out.println((int) Duration.between(now, tomorrowStart).toHours() + " hours and " + (int) Duration.between(now, tomorrowStart).toMinutes() + " minutes till midnight.\n\n");
             Thread.sleep(timeTillMidnight);
             Runtime.getRuntime().gc();
 
