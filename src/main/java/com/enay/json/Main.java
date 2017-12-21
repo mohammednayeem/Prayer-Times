@@ -1,5 +1,6 @@
 package com.enay.json;
 
+import com.twilio.Twilio;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.json.JSONObject;
@@ -11,6 +12,14 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.zone.ZoneOffsetTransition;
 import java.time.zone.ZoneRules;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
+import java.util.Properties;
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
 
 /**
  * Created by Mohammed on 8/2/2017.
@@ -20,11 +29,14 @@ public class Main {
     private static String fajr, dhuhr, asr, maghrib, isha;
     private static int currentPrayer = 0;
     private static int timeTill = 0;
+    private static String todayDateIslamic, fullTodayDateIslamic;
     private static ZoneId z = ZoneId.of("America/Montreal");
     private static LocalDate daylightdate;
     private static LocalDate prevdaylightdate;
     private static LocalDate today;
     private static OkHttpClient client = new OkHttpClient();
+    public static final String ACCOUNT_SID = "SID";
+    public static final String AUTH_TOKEN = "TOKEN";
 
     private static void Bismillah() throws Exception {
         try {
@@ -126,14 +138,13 @@ public class Main {
             asr = LocalTime.parse(data.getJSONObject("timings").getString("Asr"), DateTimeFormatter.ofPattern("HH:mm")).toString();
             maghrib = LocalTime.parse(data.getJSONObject("timings").getString("Maghrib"), DateTimeFormatter.ofPattern("HH:mm")).toString();
             isha = LocalTime.parse(data.getJSONObject("timings").getString("Isha"), DateTimeFormatter.ofPattern("HH:mm")).toString();
+            todayDateIslamic = data.getJSONObject("timings").getString("TodayDate").toString();
+            fullTodayDateIslamic = data.getJSONObject("timings").getString("FullTodayDate").toString();
 
-            //For testing purposes
-            //fajr = "";
-            //dhuhr = "";
-            //asr = "";
-            //maghrib = "16:56";
-            //isha = "";
-
+            if(Integer.parseInt(todayDateIslamic) == 12) {
+                sendText();
+            }
+            System.out.println(fullTodayDateIslamic);
             getShortestTime();
             choosePrayer();
         } catch (Exception e) {
@@ -141,6 +152,15 @@ public class Main {
             System.out.println("Can't connect, trying alternative API.......");
             getPrayer("http://api.aladhan.com/timingsByCity?city=Nashua&country=USA&method=2");
         }
+    }
+    private static void sendText() {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        Message messageMe = Message.creator(new PhoneNumber("+NUMBER"),
+                new PhoneNumber("+FROM"),
+                "Today is " + fullTodayDateIslamic + ". Check when to fast.").create();
+        Message message2 = Message.creator(new PhoneNumber("+NUMBER"),
+                new PhoneNumber("+FROM"),
+                "Today is " + fullTodayDateIslamic + ". Check when to fast.").create();
     }
 
     private static int getDaylightSavingsTime(int num) {
@@ -305,7 +325,6 @@ public class Main {
             System.err.println(e.getMessage());
         }
     }
-
     private static void choosePrayer() {
         switch (currentPrayer) {
             case 0:
